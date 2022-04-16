@@ -1,5 +1,14 @@
-from src import load_token, ChiiWordleBot
+from src import load_token
 from discord.ext import commands
+
+import logging
+logging.basicConfig(
+    filename='chii.log',
+    encoding='utf-8',
+    level=logging.INFO,
+    format='%(levelname)s | %(asctime)s %(message)s',
+    datefmt='%m/%d/%Y %I:%M:%S %p'
+)
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned,
@@ -8,8 +17,7 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
-    print("------")
+    logging.info(f"Logged in as {bot.user.name}")
 
 bot.load_extension("src.ChiiWordleBot")
 bot.run(load_token())
