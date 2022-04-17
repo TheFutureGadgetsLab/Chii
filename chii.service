@@ -1,0 +1,16 @@
+# Copy to /etc/systemd/system/
+[Unit]
+Description=Chii Bot
+After=network.target
+
+[Service]
+User=supa
+Group=supa
+Type=simple
+WorkingDirectory=/home/supa/Chii/
+ExecStart=/usr/bin/bash -c 'source /home/supa/anaconda3/bin/activate ; conda activate Chii ; python main.py'
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

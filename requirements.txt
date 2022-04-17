@@ -1,0 +1,3 @@
+pandas
+py-cord
+glicko2

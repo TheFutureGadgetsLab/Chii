@@ -10,6 +10,7 @@ from discord.message import Message
 
 from src import utils
 import logging
+from glicko2 import Player
 
 WordleResult = namedtuple('WordleResult', ['day', 'tries', 'user'])
 
@@ -32,6 +33,7 @@ class ChiiWordleBot(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         await self.load_dataframe()
+        await self.scan_last_n_days(5)
 
     @commands.Cog.listener()
     async def on_message(self, message: Message) -> None:
@@ -86,13 +88,22 @@ class ChiiWordleBot(commands.Cog):
 
         print("Finished initial population")
 
+    async def scan_last_n_days(self, days: int) -> None:
+        logging.info("ChiiWordleBot: Scanning last %d days", days)
+        import datetime 
+        tod = datetime.datetime.now()
+        d = datetime.timedelta(days=days)
+        for channel in utils.get_text_channels(self.bot):
+            async for message in channel.history(limit=None, oldest_first=True, after=tod-d):
+                self.update_dataframe(message)
+
+        logging.info("ChiiWordleBot: Finished scanning last %d days", days)
+
     async def glicko(self):
         def outcome(p1_tries, p2_tries):
             if p1_tries == p2_tries:
                 return 0.5
             return int(p1_tries < p2_tries)
-
-        from glicko2 import Player
 
         users = self.df['user'].unique()
         players = {name:Player() for name in users}
