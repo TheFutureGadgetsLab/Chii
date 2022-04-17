@@ -1,6 +1,8 @@
 from typing import List
-from discord.ext import commands
+
 from discord.channel import TextChannel
+from discord.ext import commands
+
 
 def get_text_channels(bot: commands.Bot, ignore_bot_testing=True) -> List[TextChannel]:
     """ Returns a list of all text channels """

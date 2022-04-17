@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 from collections import namedtuple
@@ -7,25 +8,23 @@ import pandas as pd
 from discord.ext import commands
 from discord.ext.commands import Context
 from discord.message import Message
+from glicko2 import Player
 
 from src import utils
-import logging
-from glicko2 import Player
+from src.CogSkeleton import CogSkeleton
 
 WordleResult = namedtuple('WordleResult', ['day', 'tries', 'user'])
 
 DF_PATH = "data/wordle.csv"
 
-class ChiiWordleBot(commands.Cog):
+class ChiiWordleBot(CogSkeleton):
     """
     ChiiWordleBot is a cog that scans messages for wordle results and
     creates a leaderboard based on user performance
     """
 
     def __init__(self, bot: commands.Bot):
-        super().__init__()
-
-        self.bot = bot
+        super().__init__(bot)
 
         # Stores results
         self.df: pd.DataFrame = None
@@ -72,7 +71,7 @@ class ChiiWordleBot(commands.Cog):
             return
 
 
-        logging.info(f"Adding entry: {entry}")
+        self.logger.info(f"Adding entry: {entry}")
 
         self.df.loc[len(self.df.index)] = [entry.day, entry.tries, entry.user]
         self.df.to_csv(DF_PATH, index=False)
@@ -89,15 +88,14 @@ class ChiiWordleBot(commands.Cog):
         print("Finished initial population")
 
     async def scan_last_n_days(self, days: int) -> None:
-        logging.info("ChiiWordleBot: Scanning last %d days", days)
-        import datetime 
+        self.logger.info("ChiiWordleBot: Scanning last %d days", days)
         tod = datetime.datetime.now()
         d = datetime.timedelta(days=days)
         for channel in utils.get_text_channels(self.bot):
             async for message in channel.history(limit=None, oldest_first=True, after=tod-d):
                 self.update_dataframe(message)
 
-        logging.info("ChiiWordleBot: Finished scanning last %d days", days)
+        self.logger.info("ChiiWordleBot: Finished scanning last %d days", days)
 
     async def glicko(self):
         def outcome(p1_tries, p2_tries):
