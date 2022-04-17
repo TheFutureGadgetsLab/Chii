@@ -9,6 +9,7 @@ from discord.ext.commands import Context
 from discord.message import Message
 
 from src import utils
+from src.Glicko import Player
 import logging
 
 WordleResult = namedtuple('WordleResult', ['day', 'tries', 'user'])
@@ -27,7 +28,7 @@ class ChiiWordleBot(commands.Cog):
         self.bot = bot
 
         # Stores results
-        self.dataframe: pd.DataFrame = None
+        self.df: pd.DataFrame = None
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -42,7 +43,7 @@ class ChiiWordleBot(commands.Cog):
 
     @commands.command(name='wordle_leaderboard')
     async def leaderboard(self, ctx: Context) -> None:
-        string = format_leaderboard(self.dataframe)
+        string = format_leaderboard(self.df, await self.glicko())
         string = f"```\n{string}```"
         await ctx.send(string)
 
@@ -50,9 +51,9 @@ class ChiiWordleBot(commands.Cog):
         """ Loads the dataframe from the csv file """
 
         if os.path.exists(DF_PATH):
-            self.dataframe = pd.read_csv(DF_PATH)
+            self.df = pd.read_csv(DF_PATH)
         else:
-            self.dataframe = pd.DataFrame(columns=["day", "tries", "user"])
+            self.df = pd.DataFrame(columns=["day", "tries", "user"])
             await self.initial_populate()
 
     def update_dataframe(self, message: Message) -> Optional[WordleResult]:
@@ -63,17 +64,17 @@ class ChiiWordleBot(commands.Cog):
 
         # Dont duplicate entries
         if (
-            (self.dataframe['day']   == entry.day)   &
-            (self.dataframe['tries'] == entry.tries) &
-            (self.dataframe['user']  == entry.user)
+            (self.df['day']   == entry.day)   &
+            (self.df['tries'] == entry.tries) &
+            (self.df['user']  == entry.user)
         ).any():
             return
 
 
         logging.info(f"Adding entry: {entry}")
 
-        self.dataframe.loc[len(self.dataframe.index)] = [entry.day, entry.tries, entry.user]
-        self.dataframe.to_csv(DF_PATH, index=False)
+        self.df.loc[len(self.df.index)] = [entry.day, entry.tries, entry.user]
+        self.df.to_csv(DF_PATH, index=False)
 
         return entry
 
@@ -86,10 +87,51 @@ class ChiiWordleBot(commands.Cog):
 
         print("Finished initial population")
 
-def format_leaderboard(dataframe: pd.DataFrame) -> str:
+    async def glicko(self):
+        def outcome(p1_tries, p2_tries):
+            if p1_tries == p2_tries:
+                return 0.5
+            return int(p1_tries < p2_tries)
+
+        from glicko2 import Player
+
+        users = self.df['user'].unique()
+        players = {name:Player() for name in users}
+
+        for day in range(self.df['day'].min(), self.df['day'].max()):
+            subset = self.df[self.df['day'] == day]
+
+            ratings = {}
+            rds     = {}
+            tries   = {}
+            for name, player in players.items():
+                if name not in subset['user'].values:
+                    tries_ = 6
+                else:
+                    tries_ = subset[subset['user'] == name]['tries'].iloc[0]
+
+                ratings[name] = players[name].rating
+                rds[name]     = players[name].rd
+                tries[name]   = tries_
+
+            for name, player in players.items():
+                player.update_player(
+                    rating_list=[ratings[k] for k in ratings if k != name],
+                    RD_list=[rds[k] for k in rds if k != name],
+                    outcome_list=[outcome(tries[name], tries[k]) for k in ratings if k != name]
+                )
+
+        results = {k:v.rating for k,v in players.items()}
+        results = {k:v for k,v in sorted(results.items(), key=lambda x: x[1])}
+        return results
+
+def format_leaderboard(dataframe: pd.DataFrame, glicko) -> str:
     stats = dataframe.groupby("user").describe()['tries'][['count', 'mean', 'min', 'std']]
 
-    stats = stats.sort_values('mean').reset_index()
+    for name, elo in glicko.items():
+        stats.loc[name, 'Elo'] = elo
+
+    stats = stats.sort_values('Elo', ascending=False).reset_index()
     stats.index += 1
 
     stats = stats.rename({'count': 'Entries', 'mean': 'Avg', 'min': 'Min', 'std': 'Stddev', 'user': 'User'}, axis=1)
