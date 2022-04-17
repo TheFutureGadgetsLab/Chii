@@ -9,7 +9,6 @@ from discord.ext.commands import Context
 from discord.message import Message
 
 from src import utils
-from src.Glicko import Player
 import logging
 
 WordleResult = namedtuple('WordleResult', ['day', 'tries', 'user'])
@@ -106,7 +105,7 @@ class ChiiWordleBot(commands.Cog):
             tries   = {}
             for name, player in players.items():
                 if name not in subset['user'].values:
-                    tries_ = 6
+                    tries_ = 7
                 else:
                     tries_ = subset[subset['user'] == name]['tries'].iloc[0]
 
