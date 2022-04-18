@@ -10,14 +10,13 @@ from discord.ext.commands import Context
 from discord.message import Message
 from glicko2 import Player
 
-from src import utils
 from src.CogSkeleton import CogSkeleton
 
 WordleResult = namedtuple('WordleResult', ['day', 'tries', 'user'])
 
 DF_PATH = "data/wordle.csv"
 
-class ChiiWordleBot(CogSkeleton):
+class ChiiWordleCog(CogSkeleton):
     """
     ChiiWordleBot is a cog that scans messages for wordle results and
     creates a leaderboard based on user performance
@@ -80,8 +79,8 @@ class ChiiWordleBot(CogSkeleton):
 
     async def initial_populate(self):
         """ If dataframe doesnt exist, loop over all messages and scan for wordle results """
-        for channel in utils.get_text_channels(self.bot):
-            print("Scanning channel:", channel.name)
+        for channel in self.get_text_channels():
+            self.logger.info("Scanning channel:", channel.name)
             async for message in channel.history(limit=None, oldest_first=True):
                 self.update_dataframe(message)
 
@@ -91,7 +90,7 @@ class ChiiWordleBot(CogSkeleton):
         self.logger.info("ChiiWordleBot: Scanning last %d days", days)
         tod = datetime.datetime.now()
         d = datetime.timedelta(days=days)
-        for channel in utils.get_text_channels(self.bot):
+        for channel in self.get_text_channels():
             async for message in channel.history(limit=None, oldest_first=True, after=tod-d):
                 self.update_dataframe(message)
 
@@ -152,7 +151,7 @@ def format_leaderboard(dataframe: pd.DataFrame, glicko) -> str:
         return stats.to_string()
 
 def parse_message(message: Message) -> Optional[WordleResult]:
-    split = re.split("(Wordle) (\d+) (\d\/\d)\n", message.content)
+    split = re.split(r"(Wordle) (\d+) (\d\/\d)\n", message.content)
     if len(split) != 5:
         return None
 
@@ -164,4 +163,4 @@ def parse_message(message: Message) -> Optional[WordleResult]:
     return result
 
 def setup(bot):
-    bot.add_cog(ChiiWordleBot(bot))
+    bot.add_cog(ChiiWordleCog(bot))

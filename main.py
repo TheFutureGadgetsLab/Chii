@@ -1,8 +1,6 @@
 from discord.ext import commands
 import discord
 
-from src import load_token
-
 bot = commands.Bot(
     command_prefix=commands.when_mentioned,
     description="The stupidest hyperintelligent discord bot you've ever seen.",
@@ -13,6 +11,10 @@ bot = commands.Bot(
 async def on_ready():
     print(f"Logged in as {bot.user.name}")
 
-bot.load_extension("src.ChiiWordleBot")
-bot.load_extension("src.ChiiValGif")
-bot.run(load_token())
+bot.load_extension("src.ChiiWordleCog")
+bot.load_extension("src.ChiiValCog")
+bot.load_extension("src.ChiiPresenceCog")
+
+with open("token.txt", "r") as token_file:
+    token = token_file.read().strip()
+bot.run(token)

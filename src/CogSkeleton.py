@@ -1,5 +1,7 @@
 import logging
+from typing import List
 
+from discord.channel import TextChannel
 from discord.ext import commands
 from discord.ext.commands import Bot, Cog, Context
 from discord.message import Message
@@ -13,7 +15,7 @@ class CogSkeleton(Cog):
 
         self.bot: Bot = bot
 
-        self.logger = self.__setup_logger(self.__derived_name, f'logs/{self.__derived_name}.log')
+        self.logger = self.__setup_logger()
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -28,11 +30,23 @@ class CogSkeleton(Cog):
         """ Called when a message is received from Discord. """
         pass
 
+    def get_text_channels(self, ignore_bot_testing=True) -> List[TextChannel]:
+        """ Returns a list of all text channels """
+        channels = [channel for channel in self.bot.get_all_channels() if isinstance(channel, TextChannel)]
+
+        if ignore_bot_testing:
+            channels = [channel for channel in channels if channel.name != "bot-testing"]
+
+        return channels
+
     @property
     def __derived_name(self):
         return str(self.__class__.__name__)
 
-    def __setup_logger(self, name, log_file, level=logging.INFO) -> logging.Logger:
+    def __setup_logger(self, level=logging.INFO) -> logging.Logger:
+        name     = self.__derived_name
+        log_file = f'logs/{self.__derived_name}.log'
+
         formatter = logging.Formatter(LOG_FORMAT, DATE_FORMAT)
 
         handler = logging.FileHandler(log_file)
@@ -41,5 +55,13 @@ class CogSkeleton(Cog):
         logger = logging.getLogger(name)
         logger.setLevel(level)
         logger.addHandler(handler)
+
+        logger.info(f'')
+        logger.info(f'#'*80)
+        logger.info(f'#')
+        logger.info(f'# {name} Startup')
+        logger.info(f'#')
+        logger.info(f'#'*80)
+        logger.info(f'')
 
         return logger
