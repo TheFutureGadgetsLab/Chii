@@ -21,7 +21,7 @@ class ChiiScream(CogSkeleton):
         for char in msg.content:
             if char.isupper():
                 uppercase_count += 1
-        if uppercase_count / len(msg.content) > 0.85:
+        if len(msg.content) > 7 and uppercase_count / len(msg.content) > 0.85:
             await msg.channel.send("A" * randrange(3, 40) + "!" * randrange(1, 8))
 
 def setup(bot):
