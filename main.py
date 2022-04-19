@@ -14,6 +14,10 @@ async def on_ready():
 bot.load_extension("src.ChiiWordleCog")
 bot.load_extension("src.ChiiValCog")
 bot.load_extension("src.ChiiFidelFucker")
+bot.load_extension("src.ChiiPresenceCog")
+bot.load_extension("src.ChiiRepeat")
+bot.load_extension("src.ChiiBlahBlah")
+bot.load_extension("src.ChiiScream")
 
 with open("token.txt", "r") as token_file:
     token = token_file.read().strip()
