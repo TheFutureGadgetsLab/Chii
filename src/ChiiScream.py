@@ -1,4 +1,4 @@
-from random import random
+from random import randrange
 
 from discord.ext import commands
 from discord.message import Message
@@ -22,7 +22,7 @@ class ChiiScream(CogSkeleton):
             if char.isupper():
                 uppercase_count += 1
         if uppercase_count / len(msg.content) > 0.85:
-            await msg.channel.send("A" * random.randrange(3, 40) + "!" * random.randrange(1, 8))
+            await msg.channel.send("A" * randrange(3, 40) + "!" * randrange(1, 8))
 
 def setup(bot):
     bot.add_cog(ChiiScream(bot))

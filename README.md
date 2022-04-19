@@ -1,2 +1,2 @@
 # Chii
-the least useful discord bot in existence
+the stupidest hyperintelligent discord bot
