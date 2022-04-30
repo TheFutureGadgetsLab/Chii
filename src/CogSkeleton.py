@@ -38,6 +38,16 @@ class CogSkeleton(Cog):
             channels = [channel for channel in channels if channel.name != "bot-testing"]
 
         return channels
+    
+    def get_text_channel_by_name(self, name: str) -> TextChannel:
+        """ Returns a text channel by name """
+        channels = self.get_text_channels()
+
+        for channel in channels:
+            if channel.name == name:
+                return channel
+
+        return None
 
     @property
     def __derived_name(self):
