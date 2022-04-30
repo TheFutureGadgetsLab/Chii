@@ -65,3 +65,6 @@ class CogSkeleton(Cog):
         logger.info(f'')
 
         return logger
+
+    async def cog_command_error(self, ctx: Context, error: Exception) -> None:
+        self.logger.error(str(error))

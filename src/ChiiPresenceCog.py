@@ -13,8 +13,8 @@ class ChiiPresenceCog(CogSkeleton):
         discord.Activity(type=discord.ActivityType.watching,  name="you"),
         discord.Activity(type=discord.ActivityType.competing, name="the Bot Olympics"),
         discord.Activity(type=discord.ActivityType.listening, name="Jordan Peterson"),
-        discord.Activity(type=discord.ActivityType.listening, name="peeing ASMR"),
-        discord.Activity(type=discord.ActivityType.listening, name="ben shapiro reading the old testament"),
+        discord.Activity(type=discord.ActivityType.listening, name="Peeing ASMR"),
+        discord.Activity(type=discord.ActivityType.listening, name="Ben Shapiro reading the old testament"),
     ]
 
     def __init__(self, bot: Bot):

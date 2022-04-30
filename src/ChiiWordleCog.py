@@ -35,10 +35,7 @@ class ChiiWordleCog(CogSkeleton):
 
     @commands.Cog.listener()
     async def on_message(self, message: Message) -> None:
-        entry = self.update_dataframe(message)
-
-        if entry is not None:
-            await message.channel.send(f"Thanks for your submission, {entry.user}, you suck ass :)")
+        await self.update_dataframe(message)
 
     @commands.command(name='wordle_leaderboard')
     async def leaderboard(self, ctx: Context) -> None:
@@ -53,13 +50,16 @@ class ChiiWordleCog(CogSkeleton):
             self.df = pd.read_csv(DF_PATH)
         else:
             self.df = pd.DataFrame(columns=["day", "tries", "user"])
-            await self.initial_populate()
+            await self.scan_last_n_days(365*10)
 
-    def update_dataframe(self, message: Message) -> Optional[WordleResult]:
+    async def update_dataframe(self, message: Message) -> Optional[WordleResult]:
         """ Updates the dataframe with the given day, tries, and user """
         entry = parse_message(message)
         if entry is None:
             return None
+
+        self.logger.debug("Got a hit") 
+        await message.add_reaction("👍")
 
         # Dont duplicate entries
         if (
@@ -77,22 +77,13 @@ class ChiiWordleCog(CogSkeleton):
 
         return entry
 
-    async def initial_populate(self):
-        """ If dataframe doesnt exist, loop over all messages and scan for wordle results """
-        for channel in self.get_text_channels():
-            self.logger.info("Scanning channel:", channel.name)
-            async for message in channel.history(limit=None, oldest_first=True):
-                self.update_dataframe(message)
-
-        print("Finished initial population")
-
     async def scan_last_n_days(self, days: int) -> None:
         self.logger.info("ChiiWordleBot: Scanning last %d days", days)
         tod = datetime.datetime.now()
         d = datetime.timedelta(days=days)
         for channel in self.get_text_channels():
             async for message in channel.history(limit=None, oldest_first=True, after=tod-d):
-                self.update_dataframe(message)
+                await self.update_dataframe(message)
 
         self.logger.info("ChiiWordleBot: Finished scanning last %d days", days)
 
