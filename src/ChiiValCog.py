@@ -10,9 +10,14 @@ from src.CogSkeleton import CogSkeleton
 
 class ChiiValCog(CogSkeleton):
     GIF_LINKS = [
-        'https://tenor.com/view/valorant-play-valorant-hop-on-valorant-hop-on-anime-kissing-gif-23656387',
+        'https://c.tenor.com/AmoBE7GHZpkAAAAC/valorant-play-valorant.gif',
         'https://c.tenor.com/rhNlcxoiD_QAAAAC/valorant.gif',
-        'https://tenor.com/view/iahtethis-gif-21851946'
+        'https://c.tenor.com/xaKjzheIdEUAAAAC/iahtethis.gif',
+        'https://c.tenor.com/yHC9Hw8aMBMAAAAC/hop-on-val-valorant.gif',
+        'https://c.tenor.com/RyaD6p3F6ZIAAAAC/valorant-get-on-valorant.gif',
+        'https://c.tenor.com/wq06F7HScjQAAAAC/valorant-pbe.gif',
+        'https://c.tenor.com/BleThQtSxFsAAAAC/death-note-l-lawliet.gif',
+        'https://c.tenor.com/e7bjIqmpHScAAAAC/hiko-100thieves.gif',
     ]
     def __init__(self, bot: Bot):
         super().__init__(bot)
