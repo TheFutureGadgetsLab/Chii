@@ -12,6 +12,7 @@ from discord.ext.commands import Context
 from discord.message import Message
 
 from src.CogSkeleton import CogSkeleton
+import onnxruntime as ort
 
 torch.set_grad_enabled(False)
 
@@ -24,8 +25,15 @@ class ChiiUpscale(CogSkeleton):
         super().__init__(bot)
 
         self.last_image = None
-        self.model = torch.jit.load("./data/sr_model.jit")
-        self.model.eval()
+
+        sess_options = ort.SessionOptions()
+        sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+
+        self.ort_session = ort.InferenceSession(
+            "data/sr_model.optimized.onnx",
+            sess_options=sess_options,
+            providers=['CPUExecutionProvider']
+        )
 
     @commands.command(name='upscale')
     async def leaderboard(self, ctx: Context) -> None:
@@ -44,7 +52,7 @@ class ChiiUpscale(CogSkeleton):
 
         fmt, _ = mimetypes.guess_type(self.last_image)
         if 'image' in fmt:
-            inp = tv.io.read_image(infile.name, mode=tv.io.ImageReadMode.RGB)
+            inp = [tv.io.read_image(infile.name, mode=tv.io.ImageReadMode.RGB),]
         elif 'video' in fmt:
             inp, audio, meta  = tv.io.read_video(infile.name)
             inp = inp.movedim(-1, 1).contiguous()
@@ -52,8 +60,13 @@ class ChiiUpscale(CogSkeleton):
             await ctx.send("Daddy I got something stuck in my buffer and idk what it is :(")
             return
 
-        with torch.inference_mode():
-            sr = self.model(inp)
+        out = []
+        for img in inp:
+            sr = self.ort_session.run(None, {"input": img.numpy()})[0]
+            sr = torch.from_numpy(sr)
+            out.append(sr)
+
+        sr = torch.stack(out).squeeze()
 
         if 'image' in fmt:
             outfile = tempfile.NamedTemporaryFile()
