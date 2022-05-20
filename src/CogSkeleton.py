@@ -83,3 +83,6 @@ class CogSkeleton(Cog):
 
     async def cog_command_error(self, ctx: Context, error: Exception) -> None:
         self.logger.error(str(error))
+        print("-+"*40)
+        print(self.__derived_name)
+        print(error)
