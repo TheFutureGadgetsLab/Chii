@@ -25,7 +25,11 @@ class ChiiScream(CogSkeleton):
                     uppercase_count += 1
                 total_count += 1
         if total_count > 3 and uppercase_count / total_count > 0.85:
-            await msg.channel.send("A" * randrange(3, 40) + "!" * randrange(1, 8))
+            await self.send_with_prob(
+                channel=msg.channel,
+                message="A" * randrange(3, 40) + "!" * randrange(1, 8),
+                prob=0.4
+            )
 
 def setup(bot):
     bot.add_cog(ChiiScream(bot))

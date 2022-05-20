@@ -5,6 +5,7 @@ from discord.channel import TextChannel
 from discord.ext import commands
 from discord.ext.commands import Bot, Cog, Context
 from discord.message import Message
+from random import random
 
 LOG_FORMAT  ='%(levelname)s | %(asctime)s %(message)s'
 DATE_FORMAT ='%m/%d/%Y %I:%M:%S %p'
@@ -48,6 +49,10 @@ class CogSkeleton(Cog):
                 return channel
 
         return None
+
+    async def send_with_prob(self, channel: TextChannel, message: str, prob: float) -> None:
+        if random() < prob:
+            await channel.send(message)
 
     @property
     def __derived_name(self):

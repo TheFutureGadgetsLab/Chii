@@ -18,10 +18,13 @@ class ChiiFidelFucker(CogSkeleton):
         if message.author.id != self.FIDEL_ID:
             return
 
-        if random.random() < 1.0/100.0:
-            await self.alt_caps(message)
+        await self.send_with_prob(
+            channel=message.channel,
+            message=self.alt_caps(message),
+            prob=1.0/100.0
+        )
     
-    async def alt_caps(self, message: Message):
+    def alt_caps(self, message: Message):
         """ Change each character in message to alternating uppercase and lowercase """
 
         self.logger.info(f"Screwing with Fidel, alt caps: {message.content}")
@@ -30,7 +33,7 @@ class ChiiFidelFucker(CogSkeleton):
             char.upper() if i % 2 == 0 else char.lower()
             for i, char in enumerate(message.content)
         ])
-        await message.channel.send(new_message)
+        return new_message
 
 def setup(bot):
     bot.add_cog(ChiiFidelFucker(bot))
