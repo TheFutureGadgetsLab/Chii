@@ -11,7 +11,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 from discord.message import Message
 
-from src.CogSkeleton import CogSkeleton
+from src.body.CogSkeleton import CogSkeleton
 import onnxruntime as ort
 
 torch.set_grad_enabled(False)
@@ -36,7 +36,7 @@ class ChiiUpscale(CogSkeleton):
         )
 
     @commands.command(name='upscale')
-    async def leaderboard(self, ctx: Context) -> None:
+    async def upscale(self, ctx: Context) -> None:
         if self.last_image is None:
             await ctx.send("Daddy I don't have an image to upscale :(")
             return

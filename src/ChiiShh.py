@@ -1,9 +1,9 @@
-from random import randrange, random
+from random import choice, randrange
 
 from discord.ext import commands
 from discord.message import Message
 
-from src.CogSkeleton import CogSkeleton
+from src.body.CogSkeleton import CogSkeleton
 
 class ChiiShh(CogSkeleton):
     """
@@ -13,24 +13,27 @@ class ChiiShh(CogSkeleton):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
 
-    @commands.Cog.listener()
-    async def on_message(self, msg: Message) -> None:
-        if msg.author.id == self.bot.user.id:
-            return
-        if random() < 0.01:
-            msgs = [
-                "s" + "h" * randrange(2, 10),
-                "no",
-                f"shut {'u' * randrange(1,8)}p",
-                f"shut the fuck {'u' * randrange(1,8)}p",
-                "stfu",
-                f"st{'o' * randrange(1,8)}p",
-                "stop talking please",
-                "please stop talking",
-                "loud today aren't we",
-                "have a lot to say today dont't we",
-            ]
-            await msg.channel.send(msgs[randrange(0, len(msgs))])
+        self.register_hook(
+            hook_func=self.shh,
+            ignore_bot=True,
+            with_prob=0.01,
+        )
+
+    async def shh(self, msg: Message) -> None:
+        print("HMMM")
+        msgs = [
+            "s" + "h" * randrange(2, 10),
+            "no",
+            f"shut {'u' * randrange(1,8)}p",
+            f"shut the fuck {'u' * randrange(1,8)}p",
+            "stfu",
+            f"st{'o' * randrange(1,8)}p",
+            "stop talking please",
+            "please stop talking",
+            "loud today aren't we",
+            "have a lot to say today don't we",
+        ]
+        await msg.channel.send(choice(msgs))
 
 def setup(bot):
     bot.add_cog(ChiiShh(bot))

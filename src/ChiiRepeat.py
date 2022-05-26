@@ -3,7 +3,7 @@ from random import random
 from discord.ext import commands
 from discord.message import Message
 
-from src.CogSkeleton import CogSkeleton
+from src.body.CogSkeleton import CogSkeleton
 
 class ChiiRepeat(CogSkeleton):
     """
@@ -15,10 +15,12 @@ class ChiiRepeat(CogSkeleton):
         self.last_repeated_msg = None
         self.repeated_count = 0
 
-    @commands.Cog.listener()
-    async def on_message(self, msg: Message) -> None:
-        if msg.author.id == self.bot.user.id:
-            return
+        self.register_hook(
+            hook_func=self.repeat,
+            ignore_bot=True,
+        )
+
+    async def repeat(self, msg: Message) -> None:
         m: str = msg.content.lower().strip()
 
         if self.last_repeated_msg == m:

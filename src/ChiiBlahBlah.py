@@ -3,7 +3,7 @@ from random import random
 from discord.ext import tasks, commands
 from discord.message import Message
 
-from src.CogSkeleton import CogSkeleton
+from src.body.CogSkeleton import CogSkeleton
 
 class ChiiBlahBlah(CogSkeleton):
     """

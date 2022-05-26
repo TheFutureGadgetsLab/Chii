@@ -4,7 +4,7 @@ import discord
 from discord.ext import tasks, commands
 from discord.ext.commands import Bot
 
-from src.CogSkeleton import CogSkeleton
+from src.body.CogSkeleton import CogSkeleton
 
 
 class ChiiPresenceCog(CogSkeleton):
