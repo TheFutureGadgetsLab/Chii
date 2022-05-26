@@ -50,13 +50,13 @@ class ChiiUpscale(CogSkeleton):
         content = np.ascontiguousarray(
             np.moveaxis(content, -1, 1)
         )
-
         out = []
         for frame in content:
+            frame = frame[None, ...]
             sr = self.ort_session.run(None, {"input": frame})[0]
             out.append(sr)
 
-        sr = np.moveaxis(np.stack(out), 1, -1)
+        sr = np.squeeze(np.moveaxis(np.concatenate(out, axis=0), 1, -1))
 
         if "mp4" in self.last_image:
             extension = ".mp4"
