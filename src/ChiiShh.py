@@ -20,7 +20,6 @@ class ChiiShh(CogSkeleton):
         )
 
     async def shh(self, msg: Message) -> None:
-        print("HMMM")
         msgs = [
             "s" + "h" * randrange(2, 10),
             "no",

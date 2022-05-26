@@ -1,7 +1,6 @@
 from random import random
 from typing import Callable
 
-from discord.ext import commands
 from discord.message import Message
 
 class Hook:
@@ -31,6 +30,7 @@ class HookLimb:
         with_prob: float = 1.0,
 
     ) -> None:
+        """ Hooks are called in order of registration. """
         self.hooks.append(Hook(hook_func, condition, ignore_bot, with_prob))
 
     async def process_hooks(self, message: Message) -> None:

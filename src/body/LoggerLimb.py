@@ -1,4 +1,5 @@
 import logging
+
 from discord.ext.commands import Context
 
 LOG_FORMAT  ='%(levelname)s | %(asctime)s %(message)s'

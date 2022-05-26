@@ -1,7 +1,8 @@
+from random import random
 from typing import List
 
 from discord.channel import TextChannel
-from random import random
+
 
 class MiscLimb:
     def get_text_channels(self, ignore_bot_testing=True) -> List[TextChannel]:

@@ -14,7 +14,7 @@ class ChiiFidelFucker(CogSkeleton):
             hook_func=self.alt_cap,
             condition=lambda message: message.author.id == self.FIDEL_ID,
             ignore_bot=True,
-            with_prob=1.0/100.0,
+            with_prob=0.01,
         )
 
     async def alt_cap(self, message: Message):

@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord.message import Message
 
+
 class DiscordLimb:
     """ Effectively contains documentation for the useful pycord functions. """
 
