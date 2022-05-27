@@ -39,6 +39,8 @@ bot.load_extension("src.ChiiBlahBlah")
 bot.load_extension("src.ChiiScream")
 bot.load_extension("src.ChiiUpscale")
 bot.load_extension("src.ChiiShh")
+bot.load_extension("src.ChiiZzz")
+bot.load_extension("src.ChiiTFTCog")
 
 with open("token.txt", "r") as token_file:
     token = token_file.read().strip()
