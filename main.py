@@ -1,11 +1,30 @@
 from discord.ext import commands
 import discord
+from tabulate import tabulate
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned,
     description="The stupidest hyperintelligent discord bot you've ever seen.",
     intents=discord.Intents.all()
 )
+
+@bot.command()
+@commands.is_owner()
+async def reload(ctx):
+    extensions = list(bot.extensions.keys())
+    table = []
+    for extension in extensions:
+        pname = extension.split(".")[-1]
+        try:
+            bot.reload_extension(extension)
+            status = "✅"
+        except:
+            status = "⛔"
+        table.append((pname, status))
+
+    toprint = f"```\n{tabulate(table, headers=['Cog', 'Status'])}\n```"
+    embed = discord.Embed(title='Reloaded', description=toprint, color=0xff00c8)
+    await ctx.send(embed=embed)
 
 @bot.event
 async def on_ready():
