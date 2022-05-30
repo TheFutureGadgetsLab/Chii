@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 token.txt
-data
+/data/*
+!data/.keep
