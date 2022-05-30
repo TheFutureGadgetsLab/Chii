@@ -22,7 +22,7 @@ bot.load_extension("src.ChiiUpscale")
 bot.load_extension("src.ChiiShh")
 bot.load_extension("src.ChiiZzz")
 bot.load_extension("src.ChiiTFTCog")
-bot.load_extension("src.ChiiPog")
+bot.load_extension("src.ChiiFarmCog")
 
 with open("token.txt", "r") as token_file:
     token = token_file.read().strip()

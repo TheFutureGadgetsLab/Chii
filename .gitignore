@@ -132,3 +132,4 @@ token.txt
 /data/*
 !data/.keep
 !data/Pig.mp3
+!data/Goat.mp3
