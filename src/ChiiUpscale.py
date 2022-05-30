@@ -21,7 +21,7 @@ class ChiiUpscale(CogSkeleton):
         super().__init__(bot)
 
         self.last_image = None
-
+        self.last_message = None
         sess_options = ort.SessionOptions()
         sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
 
@@ -35,7 +35,8 @@ class ChiiUpscale(CogSkeleton):
 
     @commands.command(name='upscale')
     async def upscale(self, ctx: Context) -> None:
-        if self.last_image is None:
+        print("Upscaling")
+        if self.last_image is None or self.last_message is None:
             await ctx.send("Daddy I don't have an image to upscale :point_right: :point_left: send me one uwu")
             return
 
@@ -43,7 +44,9 @@ class ChiiUpscale(CogSkeleton):
             content = download_content(self.last_image)
         except:
             await ctx.send("Daddy wtf did you send me I can't download that :point_right: :point_left:")
+            return
 
+        await self.last_message.add_reaction("👍")
         if content.ndim == 3:
             content = content[None, ...]
 
@@ -72,18 +75,20 @@ class ChiiUpscale(CogSkeleton):
         for embed in msg.embeds:
             if embed.image != Embed.Empty:
                 self.last_image = embed.image.url
+                self.last_message = msg
                 found = True
             if embed.video != Embed.Empty:
                 self.last_image = embed.video.url
+                self.last_message = msg
                 found = True
         
         for attach in msg.attachments:
             if attach.content_type.split("/")[0] in ["image", "video"]:
                 self.last_image = attach.url
+                self.last_message = msg
                 found = True
 
         if found: 
-            msg.add_reaction(":thumbsup:")
             self.logger.info("Last image updated to: {}".format(self.last_image))
 
 def download_content(url: str) -> np.array:
