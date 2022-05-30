@@ -83,6 +83,7 @@ class ChiiUpscale(CogSkeleton):
                 found = True
 
         if found: 
+            msg.add_reaction(":thumbsup:")
             self.logger.info("Last image updated to: {}".format(self.last_image))
 
 def download_content(url: str) -> np.array:

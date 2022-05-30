@@ -131,3 +131,4 @@ dmypy.json
 token.txt
 /data/*
 !data/.keep
+!data/Pig.mp3
