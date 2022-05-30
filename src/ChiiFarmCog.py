@@ -23,11 +23,11 @@ class ChiiFarmCog(CogSkeleton):
         await ctx.voice_client.disconnect()
 
 async def play_audio(ctx, fileName):
-    channel = ctx.author.voice.channel
     try:
+        channel = ctx.author.voice.channel
         await channel.connect()
     except AttributeError:
-        await ctx.send("You're not in a voice_channel mistah")
+        await ctx.send("You're not in a voice channel papa")
     except ClientException:
         #occurs if Chii is already connected
         pass
