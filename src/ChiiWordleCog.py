@@ -142,7 +142,7 @@ def format_leaderboard(dataframe: pd.DataFrame, glicko) -> str:
         return stats.to_string()
 
 def parse_message(message: Message) -> Optional[WordleResult]:
-    split = re.split(r"(Wordle) (\d+) (\d\/\d)\n", message.content)
+    split = re.split(r"(Wordle) (\d+) (\d\/\d)\*?\n", message.content)
     if len(split) != 5:
         return None
 
