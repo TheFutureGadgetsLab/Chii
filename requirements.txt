@@ -2,3 +2,4 @@ pandas
 py-cord
 glicko2
 imageio
+onnxruntime==1.11.1

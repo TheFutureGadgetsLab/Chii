@@ -31,7 +31,7 @@ class ChiiWordleCog(CogSkeleton):
     @commands.Cog.listener()
     async def on_ready(self):
         await self.load_dataframe()
-        await self.scan_last_n_days(5)
+        await self.scan(5)
 
     @commands.Cog.listener()
     async def on_message(self, message: Message) -> None:
@@ -50,7 +50,7 @@ class ChiiWordleCog(CogSkeleton):
             self.df = pd.read_csv(DF_PATH)
         else:
             self.df = pd.DataFrame(columns=["day", "tries", "user"])
-            await self.scan_last_n_days(365*10)
+            await self.scan()
 
     async def update_dataframe(self, message: Message) -> Optional[WordleResult]:
         """ Updates the dataframe with the given day, tries, and user """
@@ -59,7 +59,10 @@ class ChiiWordleCog(CogSkeleton):
             return None
 
         self.logger.debug("Got a hit") 
-        await message.add_reaction("👍")
+        if "⬜" in message.content:
+            await message.add_reaction("👎")
+        else:
+            await message.add_reaction("👍")
 
         # Dont duplicate entries
         if (
@@ -77,15 +80,18 @@ class ChiiWordleCog(CogSkeleton):
 
         return entry
 
-    async def scan_last_n_days(self, days: int) -> None:
-        self.logger.info("ChiiWordleBot: Scanning last %d days", days)
-        tod = datetime.datetime.now()
-        d = datetime.timedelta(days=days)
+    async def scan(self, days=None) -> None:
+        self.logger.info("ChiiWordleBot: Scanning.")
+        if days:
+            tod = datetime.datetime.now()
+            d = datetime.timedelta(days=days)
+            scan_time = tod-d
+        else:
+            scan_time = datetime.datetime.strptime("10, 01, 2021", "%m, %y, %Y")
         for channel in self.get_text_channels():
-            async for message in channel.history(limit=None, oldest_first=True, after=tod-d):
+            async for message in channel.history(limit=None, oldest_first=True, after=scan_time):
                 await self.update_dataframe(message)
-
-        self.logger.info("ChiiWordleBot: Finished scanning last %d days", days)
+        self.logger.info("ChiiWordleBot: Finished scanning.")
 
     async def glicko(self):
         def outcome(p1_tries, p2_tries):
