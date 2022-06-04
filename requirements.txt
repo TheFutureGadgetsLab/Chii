@@ -1,3 +1,4 @@
 pandas
 py-cord
 glicko2
+imageio
