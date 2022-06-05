@@ -6,6 +6,8 @@ LOG_FORMAT  ='%(levelname)s | %(asctime)s %(message)s'
 DATE_FORMAT ='%m/%d/%Y %I:%M:%S %p'
 
 class LoggerLimb:
+    BOT_CHANNEL_ID = 804894459292680225
+
     @property
     def __derived_name(self) -> str:
         """ Returns the name of the derived class """
@@ -36,6 +38,8 @@ class LoggerLimb:
 
     async def cog_command_error(self, ctx: Context, error: Exception) -> None:
         self.logger.error(str(error))
-        print("-+"*40)
-        print(self.__derived_name)
-        print(error)
+        await self.bot_channel.send(f"{self.__derived_name}:\n{str(error)}")
+
+    @property
+    def bot_channel(self):
+        return self.bot.get_channel(self.BOT_CHANNEL_ID)

@@ -35,7 +35,6 @@ class ChiiUpscale(CogSkeleton):
 
     @commands.command(name='upscale')
     async def upscale(self, ctx: Context) -> None:
-        print("Upscaling")
         if self.last_image is None or self.last_message is None:
             await ctx.send("Daddy I don't have an image to upscale :point_right: :point_left: send me one uwu")
             return
@@ -47,15 +46,10 @@ class ChiiUpscale(CogSkeleton):
             return
 
         await self.last_message.add_reaction("👍")
-        if content.ndim == 3:
-            content = content[None, ...]
 
-        content = np.ascontiguousarray(
-            np.moveaxis(content, -1, 1)
-        )
         out = []
         for frame in content:
-            frame = frame[None, ...]
+            frame = np.expand_dims(frame, axis=0)
             sr = self.ort_session.run(None, {"input": frame})[0]
             out.append(sr)
 
@@ -93,7 +87,16 @@ class ChiiUpscale(CogSkeleton):
 
 def download_content(url: str) -> np.array:
     res = requests.get(url, stream = True)
-    return iio.imread(res.content)
+    content = iio.imread(res.content)
+
+    if content.ndim == 3:
+        content = content[None, ...]
+
+    content = np.ascontiguousarray(
+        np.moveaxis(content, -1, 1)
+    )
+
+    return content
 
 def setup(bot):
     bot.add_cog(ChiiUpscale(bot))
