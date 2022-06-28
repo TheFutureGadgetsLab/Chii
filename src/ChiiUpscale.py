@@ -4,6 +4,8 @@ import imageio.v3 as iio
 import numpy as np
 import onnxruntime as ort
 import requests
+import torch
+import torchvision.transforms.functional as TF
 from discord import Embed, File
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -55,6 +57,34 @@ class ChiiUpscale(CogSkeleton):
 
         sr = np.squeeze(np.moveaxis(np.concatenate(out, axis=0), 1, -1))
 
+        await self.send(sr, ctx)
+
+    @commands.command(name='downscale')
+    async def downscale(self, ctx: Context) -> None:
+        if self.last_image is None or self.last_message is None:
+            await ctx.send("Daddy I don't have an image to upscale :point_right: :point_left: send me one uwu")
+            return
+
+        try: 
+            content = download_content(self.last_image)
+        except:
+            await ctx.send("Daddy wtf did you send me I can't download that :point_right: :point_left:")
+            return
+
+        await self.last_message.add_reaction("👍")
+
+        out = []
+        for frame in content:
+            frame = np.expand_dims(frame, axis=0)
+            frame = torch.from_numpy(frame)
+            lr = TF.resize(frame, (frame.shape[2]//2, frame.shape[3]//2), TF.InterpolationMode.NEAREST)
+            out.append(lr)
+
+        lr = np.squeeze(np.moveaxis(np.concatenate(out, axis=0), 1, -1))
+
+        await self.send(lr, ctx)
+
+    async def send(self, sr: np.array, ctx: Context) -> None:
         if "mp4" in self.last_image:
             extension = ".mp4"
         else:

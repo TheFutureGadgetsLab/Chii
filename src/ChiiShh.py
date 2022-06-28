@@ -16,7 +16,7 @@ class ChiiShh(CogSkeleton):
         self.register_hook(
             hook_func=self.shh,
             ignore_bot=True,
-            with_prob=0.01,
+            with_prob=0.001,
         )
 
     async def shh(self, msg: Message) -> None:
