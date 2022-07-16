@@ -10,7 +10,7 @@ from discord.ext.commands import Context
 from discord.message import Message
 from glicko2 import Player
 
-from src.body.CogSkeleton import CogSkeleton
+from chii.body.CogSkeleton import CogSkeleton
 
 WordleResult = namedtuple('WordleResult', ['day', 'tries', 'user'])
 

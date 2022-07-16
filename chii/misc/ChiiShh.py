@@ -3,7 +3,7 @@ from random import choice, randrange
 from discord.ext import commands
 from discord.message import Message
 
-from src.body.CogSkeleton import CogSkeleton
+from chii.body.CogSkeleton import CogSkeleton
 
 class ChiiShh(CogSkeleton):
     """

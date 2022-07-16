@@ -30,18 +30,21 @@ async def reload(ctx):
 async def on_ready():
     print(f"Logged in as {bot.user.name}")
 
-bot.load_extension("src.ChiiWordleCog")
-bot.load_extension("src.ChiiValCog")
-bot.load_extension("src.ChiiFidelFucker")
-bot.load_extension("src.ChiiPresenceCog")
-bot.load_extension("src.ChiiRepeat")
-bot.load_extension("src.ChiiBlahBlah")
-bot.load_extension("src.ChiiScream")
-bot.load_extension("src.ChiiUpscale")
-bot.load_extension("src.ChiiShh")
-bot.load_extension("src.ChiiZzz")
-bot.load_extension("src.ChiiTFTCog")
-bot.load_extension("src.ChiiFarmCog")
+bot.load_extension("chii.misc.ChiiWordleCog")
+bot.load_extension("chii.misc.ChiiValCog")
+bot.load_extension("chii.misc.ChiiFidelFucker")
+bot.load_extension("chii.misc.ChiiPresenceCog")
+bot.load_extension("chii.misc.ChiiRepeat")
+bot.load_extension("chii.misc.ChiiBlahBlah")
+bot.load_extension("chii.misc.ChiiScream")
+bot.load_extension("chii.misc.ChiiShh")
+bot.load_extension("chii.misc.ChiiZzz")
+bot.load_extension("chii.misc.ChiiTFTCog")
+bot.load_extension("chii.misc.ChiiFarmCog")
+
+# ML Cogs
+bot.load_extension("chii.ml_cogs.ChiiUpscale")
+bot.load_extension("chii.ml_cogs.ChiiDalle")
 
 with open("token.txt", "r") as token_file:
     token = token_file.read().strip()

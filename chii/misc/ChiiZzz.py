@@ -5,7 +5,7 @@ from time import time
 from discord.ext import commands, tasks
 from discord.message import Message
 
-from src.body.CogSkeleton import CogSkeleton
+from chii.body.CogSkeleton import CogSkeleton
 
 
 class ChiiZzz(CogSkeleton):

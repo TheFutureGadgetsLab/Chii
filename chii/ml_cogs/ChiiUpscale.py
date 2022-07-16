@@ -11,7 +11,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 from discord.message import Message
 
-from src.body.CogSkeleton import CogSkeleton
+from chii.body.CogSkeleton import CogSkeleton
 
 
 class ChiiUpscale(CogSkeleton):
@@ -30,7 +30,7 @@ class ChiiUpscale(CogSkeleton):
         self.ort_session = ort.InferenceSession(
             "data/sr_model.optimized.onnx",
             sess_options=sess_options,
-            providers=['CPUExecutionProvider']
+            providers=['CUDAExecutionProvider']
         )
 
         self.register_hook(self.find_image)

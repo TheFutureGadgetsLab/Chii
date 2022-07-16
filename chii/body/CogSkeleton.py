@@ -1,9 +1,9 @@
 from discord.ext import commands
 from discord.ext.commands import Bot, Cog, Context
-from src.body.DiscordLimb import DiscordLimb
-from src.body.HookLimb import HookLimb
-from src.body.LoggerLimb import LoggerLimb
-from src.body.MiscLimb import MiscLimb
+from chii.body.DiscordLimb import DiscordLimb
+from chii.body.HookLimb import HookLimb
+from chii.body.LoggerLimb import LoggerLimb
+from chii.body.MiscLimb import MiscLimb
 
 
 class CogSkeleton(DiscordLimb, LoggerLimb, MiscLimb, HookLimb, Cog):

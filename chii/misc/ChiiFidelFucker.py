@@ -1,7 +1,7 @@
 from discord.ext.commands import Bot
 from discord.message import Message
 
-from src.body.CogSkeleton import CogSkeleton
+from chii.body.CogSkeleton import CogSkeleton
 
 
 class ChiiFidelFucker(CogSkeleton):

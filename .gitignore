@@ -133,3 +133,6 @@ token.txt
 !data/.keep
 !data/Pig.mp3
 !data/Goat.mp3
+
+min_dalle
+.pdm.toml

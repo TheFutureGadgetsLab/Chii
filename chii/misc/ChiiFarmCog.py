@@ -1,9 +1,12 @@
-from fileinput import filename
-from src.body.CogSkeleton import CogSkeleton
-from discord import FFmpegPCMAudio, ClientException
+import time
+
+from discord import ClientException, FFmpegPCMAudio
 from discord.ext import commands
 from discord.ext.commands import Context
-import time
+
+from chii.body.CogSkeleton import CogSkeleton
+
+
 class ChiiFarmCog(CogSkeleton):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)

@@ -15,7 +15,7 @@ class LoggerLimb:
 
     def _setup_logger(self, level=logging.INFO) -> logging.Logger:
         name     = self.__derived_name
-        log_file = f'logs/{self.__derived_name}.log'
+        log_file = f'data/logs/{self.__derived_name}.log'
 
         formatter = logging.Formatter(LOG_FORMAT, DATE_FORMAT)
 

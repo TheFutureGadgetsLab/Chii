@@ -8,7 +8,7 @@ User=supa
 Group=supa
 Type=simple
 WorkingDirectory=/home/supa/Chii/
-ExecStart=/usr/bin/bash -c 'source /home/supa/anaconda3/bin/activate ; conda activate Chii ; python main.py'
+ExecStart=/usr/bin/bash -c 'source /home/supa/anaconda3/bin/activate ; conda activate Chii ; python -m chii'
 Restart=always
 RestartSec=5s
 
