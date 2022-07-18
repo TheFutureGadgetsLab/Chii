@@ -3,6 +3,7 @@ from typing import Callable
 
 from discord.message import Message
 
+
 class Hook:
     def __init__(self, 
         hook_func: Callable,

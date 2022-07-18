@@ -1,7 +1,13 @@
+import io
 from random import random
 from typing import List
 
+import imageio.v3 as iio
+import numpy as np
+from discord import Embed, File
 from discord.channel import TextChannel
+from discord.message import Message
+from typing import Optional
 
 
 class MiscLimb:
@@ -27,3 +33,25 @@ class MiscLimb:
     async def send_with_prob(self, channel: TextChannel, message: str, prob: float) -> None:
         if random() < prob:
             await channel.send(message)
+
+    def find_image_in_message(self, msg: Message) -> Optional[str]:
+        """ Locates an image or video in a message, returning the URL. """
+
+        for embed in msg.embeds:
+            if embed.image != Embed.Empty:
+                return embed.image.url
+            if embed.video != Embed.Empty:
+                return embed.video.url
+        
+        for attach in msg.attachments:
+            if attach.content_type.split("/")[0] in ["image", "video"]:
+                return attach.url
+
+        return None
+
+    def image_file_from_array(self, img: np.array, fname: str, extension: str) -> File:
+        """ Converts np array image/video to a file, extension must include the '.' """
+
+        bytes_image = iio.imwrite("<bytes>", img, extension=extension)
+        byte_stream = io.BytesIO(bytes_image)
+        return File(byte_stream, filename=fname)

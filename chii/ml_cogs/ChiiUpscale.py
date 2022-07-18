@@ -1,17 +1,14 @@
-import io
-
 import imageio.v3 as iio
 import numpy as np
 import onnxruntime as ort
 import requests
 import torch
 import torchvision.transforms.functional as TF
-from discord import Embed, File
+from chii.body.CogSkeleton import CogSkeleton
 from discord.ext import commands
 from discord.ext.commands import Context
 from discord.message import Message
-
-from chii.body.CogSkeleton import CogSkeleton
+from PIL import Image
 
 
 class ChiiUpscale(CogSkeleton):
@@ -22,18 +19,18 @@ class ChiiUpscale(CogSkeleton):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
 
-        self.last_image = None
+        self.last_image   = None
         self.last_message = None
+
         sess_options = ort.SessionOptions()
         sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-
         self.ort_session = ort.InferenceSession(
             "data/sr_model.optimized.onnx",
             sess_options=sess_options,
             providers=['CUDAExecutionProvider']
         )
 
-        self.register_hook(self.find_image)
+        self.register_hook(self.register_image)
 
     @commands.command(name='upscale')
     async def upscale(self, ctx: Context) -> None:
@@ -57,7 +54,13 @@ class ChiiUpscale(CogSkeleton):
 
         sr = np.squeeze(np.moveaxis(np.concatenate(out, axis=0), 1, -1))
 
-        await self.send(sr, ctx)
+        await ctx.send(
+            file=self.image_file_from_array(
+                img=sr,
+                fname="upscaled.png",
+                extension=".png" if "png" in self.last_image else ".mp4"
+            )
+        )
 
     @commands.command(name='downscale')
     async def downscale(self, ctx: Context) -> None:
@@ -82,42 +85,29 @@ class ChiiUpscale(CogSkeleton):
 
         lr = np.squeeze(np.moveaxis(np.concatenate(out, axis=0), 1, -1))
 
-        await self.send(lr, ctx)
+        await ctx.send(
+            file=self.image_file_from_array(
+                img=lr,
+                fname="downscaled.png",
+                extension=".png" if "png" in self.last_image else ".mp4"
+            )
+        )
 
-    async def send(self, sr: np.array, ctx: Context) -> None:
-        if "mp4" in self.last_image:
-            extension = ".mp4"
-        else:
-            extension = ".png"
+    async def register_image(self, msg: Message) -> None:
+        if (img_url := self.find_image_in_message(msg)) is None:
+            return
 
-        bytes_image = iio.imwrite("<bytes>", sr, extension=extension)
-        byte_stream = io.BytesIO(bytes_image)
-        await ctx.send(file=File(byte_stream, filename=f"upscaled{extension}"))
+        self.last_image   = img_url
+        self.last_message = msg
 
-    async def find_image(self, msg: Message) -> None:
-        found = False
-        for embed in msg.embeds:
-            if embed.image != Embed.Empty:
-                self.last_image = embed.image.url
-                self.last_message = msg
-                found = True
-            if embed.video != Embed.Empty:
-                self.last_image = embed.video.url
-                self.last_message = msg
-                found = True
-        
-        for attach in msg.attachments:
-            if attach.content_type.split("/")[0] in ["image", "video"]:
-                self.last_image = attach.url
-                self.last_message = msg
-                found = True
-
-        if found: 
-            self.logger.info("Last image updated to: {}".format(self.last_image))
+        self.logger.info("Last image updated to: {}".format(self.last_image))
 
 def download_content(url: str) -> np.array:
     res = requests.get(url, stream = True)
     content = iio.imread(res.content)
+
+    # Convert to RGB
+    content = np.array(Image.fromarray(content).convert('RGB'))
 
     if content.ndim == 3:
         content = content[None, ...]

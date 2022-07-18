@@ -1,14 +1,9 @@
-import io
-
-import imageio.v3 as iio
 import numpy as np
 import torch
-from discord import File
+from chii.body.CogSkeleton import CogSkeleton
 from discord.ext import commands
 from discord.ext.commands import Context
 from min_dalle.TorchGen import DalleWrapper
-
-from chii.body.CogSkeleton import CogSkeleton
 
 torch.set_grad_enabled(False)
 torch.backends.cudnn.benchmark = True
@@ -39,9 +34,7 @@ class ChiiDalle(CogSkeleton):
 
         image = np.array(image)
 
-        bytes_image = iio.imwrite("<bytes>", image, extension=".png")
-        byte_stream = io.BytesIO(bytes_image)
-        await ctx.send(file=File(byte_stream, filename=f"dalle.png"))
+        await ctx.send(file=self.image_file_from_array(image, "dalle.png", ".png"))
 
 def setup(bot):
     bot.add_cog(ChiiDalle(bot))
