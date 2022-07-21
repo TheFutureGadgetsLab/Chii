@@ -27,12 +27,17 @@ class ChiiDalle(CogSkeleton):
         message = " ".join(args)
 
         self.model = self.model.to(self.device)
+
         with torch.inference_mode(), torch.cuda.amp.autocast():
-            image = self.model(message)
+            for _ in range(4):
+                image = self.model(message)
+                image = np.array(image)
+            
+                if image.max() != 0:
+                    break
+    
         self.model = self.model.to(self.cpu)
         torch.cuda.empty_cache()
-
-        image = np.array(image)
 
         await ctx.send(file=self.image_file_from_array(image, "dalle.png", ".png"))
 
