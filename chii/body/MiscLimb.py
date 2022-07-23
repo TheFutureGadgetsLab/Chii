@@ -50,7 +50,16 @@ class MiscLimb:
         return None
 
     def image_file_from_array(self, img: np.array, fname: str, extension: str) -> File:
-        """ Converts np array image/video to a file, extension must include the '.' """
+        """ Converts np array image/video to a discord file 
+            
+            Args:
+                img: np array image/video
+                fname: filename without extension
+                extension: file extension without period
+        """
+
+        extension = f".{extension}"
+        fname = f"{fname}{extension}"
 
         bytes_image = iio.imwrite("<bytes>", img, extension=extension)
         byte_stream = io.BytesIO(bytes_image)

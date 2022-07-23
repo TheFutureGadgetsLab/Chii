@@ -5,6 +5,7 @@ import requests
 import torch
 import torchvision.transforms.functional as TF
 from chii.body.CogSkeleton import CogSkeleton
+from chii.Emojis import Emoji
 from discord.ext import commands
 from discord.ext.commands import Context
 from discord.message import Message
@@ -35,16 +36,16 @@ class ChiiUpscale(CogSkeleton):
     @commands.command(name='upscale')
     async def upscale(self, ctx: Context) -> None:
         if self.last_image is None or self.last_message is None:
-            await ctx.send("Daddy I don't have an image to upscale :point_right: :point_left: send me one uwu")
+            await ctx.send(f"Daddy I don't have an image to upscale {Emoji.point_rl} send me one uwu")
             return
 
         try: 
             content = download_content(self.last_image)
         except:
-            await ctx.send("Daddy wtf did you send me I can't download that :point_right: :point_left:")
+            await ctx.send(f"Daddy wtf did you send me I can't download that {Emoji.point_rl}")
             return
 
-        await self.last_message.add_reaction("👍")
+        await self.last_message.add_reaction(Emoji.thumbs_up)
 
         out = []
         for frame in content:
@@ -57,24 +58,24 @@ class ChiiUpscale(CogSkeleton):
         await ctx.send(
             file=self.image_file_from_array(
                 img=sr,
-                fname="upscaled.png",
-                extension=".png" if "png" in self.last_image else ".mp4"
+                fname="upscaled",
+                extension="png" if "png" in self.last_image else "mp4"
             )
         )
 
     @commands.command(name='downscale')
     async def downscale(self, ctx: Context) -> None:
         if self.last_image is None or self.last_message is None:
-            await ctx.send("Daddy I don't have an image to upscale :point_right: :point_left: send me one uwu")
+            await ctx.send(f"Daddy I don't have an image to upscale {Emoji.point_rl} send me one uwu")
             return
 
         try: 
             content = download_content(self.last_image)
         except:
-            await ctx.send("Daddy wtf did you send me I can't download that :point_right: :point_left:")
+            await ctx.send(f"Daddy wtf did you send me I can't download that {Emoji.point_rl}")
             return
 
-        await self.last_message.add_reaction("👍")
+        await self.last_message.add_reaction(Emoji.thumbs_up)
 
         out = []
         for frame in content:
@@ -88,8 +89,8 @@ class ChiiUpscale(CogSkeleton):
         await ctx.send(
             file=self.image_file_from_array(
                 img=lr,
-                fname="downscaled.png",
-                extension=".png" if "png" in self.last_image else ".mp4"
+                fname="downscaled",
+                extension="png" if "png" in self.last_image else "mp4"
             )
         )
 

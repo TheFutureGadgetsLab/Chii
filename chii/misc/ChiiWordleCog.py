@@ -9,6 +9,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 from discord.message import Message
 from glicko2 import Player
+from chii.Emojis import Emoji
 
 from chii.body.CogSkeleton import CogSkeleton
 
@@ -60,9 +61,9 @@ class ChiiWordleCog(CogSkeleton):
 
         self.logger.debug("Got a hit") 
         if "⬜" in message.content:
-            await message.add_reaction("👎")
+            await message.add_reaction(Emoji.thumbs_down)
         else:
-            await message.add_reaction("👍")
+            await message.add_reaction(Emoji.thumbs_up)
 
         # Dont duplicate entries
         if (

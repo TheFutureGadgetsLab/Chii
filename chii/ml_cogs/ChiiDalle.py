@@ -39,7 +39,13 @@ class ChiiDalle(CogSkeleton):
         self.model = self.model.to(self.cpu)
         torch.cuda.empty_cache()
 
-        await ctx.send(file=self.image_file_from_array(image, "dalle.png", ".png"))
+        await ctx.send(
+            file=self.image_file_from_array(
+                img=image,
+                fname="dalle",
+                extension="png" if "png" in self.last_image else "mp4"
+            )
+        )
 
 def setup(bot):
     bot.add_cog(ChiiDalle(bot))
