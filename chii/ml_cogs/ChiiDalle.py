@@ -43,7 +43,7 @@ class ChiiDalle(CogSkeleton):
             file=self.image_file_from_array(
                 img=image,
                 fname="dalle",
-                extension="png" if "png" in self.last_image else "mp4"
+                extension="png"
             )
         )
 

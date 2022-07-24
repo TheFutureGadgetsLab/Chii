@@ -20,16 +20,8 @@ class ChiiUpscale(CogSkeleton):
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
 
-        self.last_image   = None
-        self.last_message = None
-
-        sess_options = ort.SessionOptions()
-        sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-        self.ort_session = ort.InferenceSession(
-            "data/sr_model.optimized.onnx",
-            sess_options=sess_options,
-            providers=['CUDAExecutionProvider']
-        )
+        self.last_image: str       = None
+        self.last_message: Message = None
 
         self.register_hook(self.register_image)
 
@@ -39,7 +31,7 @@ class ChiiUpscale(CogSkeleton):
             await ctx.send(f"Daddy I don't have an image to upscale {Emoji.point_rl} send me one uwu")
             return
 
-        try: 
+        try:
             content = download_content(self.last_image)
         except:
             await ctx.send(f"Daddy wtf did you send me I can't download that {Emoji.point_rl}")
@@ -47,10 +39,11 @@ class ChiiUpscale(CogSkeleton):
 
         await self.last_message.add_reaction(Emoji.thumbs_up)
 
+        sess = self.build_session()
         out = []
         for frame in content:
             frame = np.expand_dims(frame, axis=0)
-            sr = self.ort_session.run(None, {"input": frame})[0]
+            sr = sess.run(None, {"input": frame})[0]
             out.append(sr)
 
         sr = np.squeeze(np.moveaxis(np.concatenate(out, axis=0), 1, -1))
@@ -69,7 +62,7 @@ class ChiiUpscale(CogSkeleton):
             await ctx.send(f"Daddy I don't have an image to upscale {Emoji.point_rl} send me one uwu")
             return
 
-        try: 
+        try:
             content = download_content(self.last_image)
         except:
             await ctx.send(f"Daddy wtf did you send me I can't download that {Emoji.point_rl}")
@@ -102,6 +95,15 @@ class ChiiUpscale(CogSkeleton):
         self.last_message = msg
 
         self.logger.info("Last image updated to: {}".format(self.last_image))
+
+    def build_session(self) -> ort.InferenceSession:
+        sess_options = ort.SessionOptions()
+        sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        return ort.InferenceSession(
+            "data/sr_model.optimized.onnx",
+            sess_options=sess_options,
+            providers=['CUDAExecutionProvider']
+        )
 
 def download_content(url: str) -> np.array:
     res = requests.get(url, stream = True)
